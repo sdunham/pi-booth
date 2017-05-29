@@ -1,0 +1,30 @@
+extends layout
+
+block content
+  
+  <nav class="navbar navbar-default">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <a class="navbar-brand" href="/">
+          <!-- <span class="glyphicon glyphicon-camera" aria-hidden="true"></span> -->
+          <img class="nav-brand-img" src="/images/LS-trees.png" />
+        </a>
+        <p class="navbar-text">#{navText}</p>
+      </div>
+      <a href="#help-popup" class="btn btn-default navbar-btn navbar-right help-popup-trigger">
+        <span class="glyphicon glyphicon-question-sign"></span>
+      </a>
+    </div>
+  </nav>
+
+  div(class="container-fluid camera-stream-contain")
+
+    include progress.pug
+
+  div(class="container-fluid")
+
+    <button type="button" class="btn btn-default btn-lg take-photo-button">
+      <span class="glyphicon glyphicon-camera" aria-hidden="true"></span>
+    </button>
+
+    include help.pug

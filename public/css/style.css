@@ -1,0 +1,54 @@
+/* TODO: Custom styles here */
+html, body, #app-contain{
+  height: 100%;
+}
+
+#app-contain{
+  display: flex;
+  flex-direction: column;
+}
+
+.nav-brand-img{
+  height: 25px;
+}
+
+.help-popup-trigger{
+  margin-right: 0;
+}
+
+.camera-stream-contain{
+  width: 100%;
+  margin-top: -20px;
+  flex-grow: 1;
+  background-image: url("http://placehold.it/600x400&text=camera+stream+will+go+here");
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+}
+
+.take-photo-button{
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  border-radius: 40px;
+  height: 75px;
+  width: 75px;
+}
+
+.countdown{
+  display: none;
+  position: absolute;
+  z-index: 100;
+  width: calc(100% - 30px);
+  left: 15px;
+  top: 40%;
+}
+
+.countdown .seconds-remaining{
+  text-align: center;
+  font-size: 50px;
+}
+
+.countdown .progress .progress-bar{
+  transition: none;
+}
