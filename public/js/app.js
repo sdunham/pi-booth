@@ -1,5 +1,37 @@
 $(function() {
 
+  var socket = io.connect('http://ogrepi2:3000');
+  socket.on('connectionSuccess', function (data) {
+    console.log(data);
+    //socket.emit('initCameraPreview', { foo: 'bar' });
+  });
+
+  $('.start-stream').click(function(e){
+    e.preventDefault();
+    socket.emit('initCameraPreview', { foo: 'bar' });
+  });
+
+  $('.end-stream').click(function(e){
+    e.preventDefault();
+    socket.emit('endCameraPreview', { foo: 'bar' });
+  });
+
+  socket.on('cameraPreviewStarted', function(data) {
+    console.log('cameraPreviewStarted!');
+    var previewPort = data.port;
+    var appDomain = document.domain;
+    $('.camera-stream').attr('src', '#');
+    $('.camera-stream-contain').html('<img class="camera-stream" src="" />');
+    $('.camera-stream').attr('src', 'http://'+appDomain+':'+previewPort+'/image.jpg');
+  });
+
+  socket.on('cameraPreviewEnded', function(data) {
+    console.log('cameraPreviewEnded');
+    $('.camera-stream-contain').html('<img class="camera-stream" src="" />');
+    $('.camera-stream').attr('src', '/images/Transparent.gif');
+  });
+
+
   window.countdownIndex = null;
   window.countdownInterval = null;
   window.countdownDisplaySeconds = 5;

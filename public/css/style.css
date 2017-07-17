@@ -17,13 +17,20 @@ html, body, #app-contain{
 }
 
 .camera-stream-contain{
-  width: 100%;
+  flex-grow: 1;
+}
+
+.camera-stream{
+  /*width: 100%;
   margin-top: -20px;
   flex-grow: 1;
-  background-image: url("http://placehold.it/600x400&text=camera+stream+will+go+here");
+  background-image: url("");
   background-size: cover;
   background-position: center center;
-  background-repeat: no-repeat;
+  background-repeat: no-repeat;*/
+  margin-top: -20px;
+  flex-grow: 1;
+  display: block;
 }
 
 .take-photo-button{
