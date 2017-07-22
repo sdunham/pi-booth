@@ -39,7 +39,17 @@ exports.startPreview = function(){
 };
 
 // Stop the camera preview stream process
-exports.stopPreview = function(mjpegStream){
-  mjpegStream.kill();
-  return true;
+exports.stopPreview = function(app){
+  var mjpegStream = app.get('mjpegStream');
+  if(mjpegStream){
+    mjpegStream.kill();
+    app.set('mjpegStream', null);
+    console.log('mjpegStream process killed');
+    // TODO: Is this actually killing the correct process?
+    return true;
+  }
+  else{
+    console.log('mjpegStream not set...');
+    return false;
+  }
 };

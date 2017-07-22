@@ -13,6 +13,7 @@ $(function() {
 
   $('.end-stream').click(function(e){
     e.preventDefault();
+    $('.camera-stream-contain').css('background-image', '');
     socket.emit('endCameraPreview', { foo: 'bar' });
   });
 
@@ -20,15 +21,17 @@ $(function() {
     console.log('cameraPreviewStarted!');
     var previewPort = data.port;
     var appDomain = document.domain;
-    $('.camera-stream').attr('src', '#');
-    $('.camera-stream-contain').html('<img class="camera-stream" src="" />');
-    $('.camera-stream').attr('src', 'http://'+appDomain+':'+previewPort+'/image.jpg');
+    //$('.camera-stream').attr('src', '#');
+    //$('.camera-stream-contain').html('<img class="camera-stream" src="" />');
+    //$('.camera-stream').attr('src', 'http://'+appDomain+':'+previewPort+'/image.jpg');
+    $('.camera-stream-contain').css('background-image', 'url("http://' + appDomain + ':' + previewPort  + '/image.jpg")');
   });
 
   socket.on('cameraPreviewEnded', function(data) {
     console.log('cameraPreviewEnded');
-    $('.camera-stream-contain').html('<img class="camera-stream" src="" />');
-    $('.camera-stream').attr('src', '/images/Transparent.gif');
+    //$('.camera-stream-contain').html('<img class="camera-stream" src="" />');
+    //$('.camera-stream').attr('src', '/images/Transparent.gif');
+    $('.camera-stream-contain').css('background-image', '');
   });
 
 

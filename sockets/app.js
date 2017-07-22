@@ -24,16 +24,20 @@ module.exports = function (io, app) {
     socket.on('endCameraPreview', function (data) {
       console.log('Received endCameraPreview event:');
       console.log(data);
-      var mjpegStream = app.get('mjpegStream');
-      if(mjpegStream){
-        camera.stopPreview(mjpegStream);
-        app.set('mjpegStream', null);
-        console.log('mjpegStream process killed');
-        socket.emit('cameraPreviewEnded', {});
-      }
-      else{
-        console.log('mjpegStream not set...');
-      }
+
+      var previewStopped = camera.stopPreview(app);
+      socket.emit('cameraPreviewEnded', {});
     });
+
+    // TODO
+    socket.on('takePhoto', function(data){
+      console.log('Received takePhoto event:');
+      console.log(data);
+
+      // TODO: Kill camera preview process if applicable
+      // TODO: Take a photo & save it locally
+      // TODO: Emit a socket event w/ new image to display on front end
+    });
+
   });
 };
