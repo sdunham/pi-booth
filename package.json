@@ -13,6 +13,7 @@
     "morgan": "~1.8.1",
     "pug": "~2.0.0-beta11",
     "raspberry-pi-mjpeg-server": "0.0.8",
+    "raspicam": "^0.2.14",
     "serve-favicon": "~2.4.2",
     "socket.io": "^2.0.1"
   }

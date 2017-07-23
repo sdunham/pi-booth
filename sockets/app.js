@@ -29,15 +29,25 @@ module.exports = function (io, app) {
       socket.emit('cameraPreviewEnded', {});
     });
 
-    // TODO
+    // Take a photo
     socket.on('takePhoto', function(data){
       console.log('Received takePhoto event:');
       console.log(data);
 
-      // TODO: Kill camera preview process if applicable
-      // TODO: Take a photo & save it locally
-      // TODO: Emit a socket event w/ new image to display on front end
+      // Kill camera preview process if applicable
+      var previewStopped = camera.stopPreview(app);
+      // Trigger a photo to be taken and saved locally
+      var takePhotoPromise = camera.takePhoto();
+      takePhotoPromise
+        .then(function (file) {
+          // The photo was taken
+          console.log('Take photo promise resolved successfully', file);
+          //socket.emit('photoTaken', {photo: file});
+        })
+        .catch(function (err) {
+          // Something went wrong taking the photo
+          console.error(err);
+        });
     });
-
   });
 };

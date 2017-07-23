@@ -3,28 +3,28 @@ $(function() {
   var socket = io.connect('http://ogrepi2:3000');
   socket.on('connectionSuccess', function (data) {
     console.log(data);
-    //socket.emit('initCameraPreview', { foo: 'bar' });
   });
 
   $('.start-stream').click(function(e){
     e.preventDefault();
-    socket.emit('initCameraPreview', { foo: 'bar' });
+    socket.emit('initCameraPreview');
   });
 
   $('.end-stream').click(function(e){
     e.preventDefault();
     $('.camera-stream-contain').css('background-image', '');
-    socket.emit('endCameraPreview', { foo: 'bar' });
+    socket.emit('endCameraPreview');
   });
 
   socket.on('cameraPreviewStarted', function(data) {
-    console.log('cameraPreviewStarted!');
+    console.log('cameraPreviewStarted');
     var previewPort = data.port;
     var appDomain = document.domain;
     //$('.camera-stream').attr('src', '#');
     //$('.camera-stream-contain').html('<img class="camera-stream" src="" />');
     //$('.camera-stream').attr('src', 'http://'+appDomain+':'+previewPort+'/image.jpg');
     $('.camera-stream-contain').css('background-image', 'url("http://' + appDomain + ':' + previewPort  + '/image.jpg")');
+    doCountdown();
   });
 
   socket.on('cameraPreviewEnded', function(data) {
@@ -45,7 +45,7 @@ $(function() {
     e.preventDefault();
     //alert('Eventually this will start a mjpeg stream from the Raspberry Pi camera, and then trigger a photo capture after a certain amount of time.');
     // TODO: Start stream, update div background to show mjpeg
-    doCountdown();
+    socket.emit('initCameraPreview');
   });
 
   // Click handler for help popup
@@ -85,5 +85,6 @@ $(function() {
     $('.countdown').hide();
     $('.countdown .progress .progress-bar').width('100%');
     $('.countdown .seconds-remaining').html('5');
+    socket.emit('takePhoto');
   }
 });
