@@ -25,8 +25,15 @@ module.exports = function (io, app) {
       console.log('Received endCameraPreview event:');
       console.log(data);
 
-      var previewStopped = camera.stopPreview(app);
-      socket.emit('cameraPreviewEnded', {});
+      var previewStopPromise = camera.stopPreview(app);
+      previewStopPromise
+        .then(function(){
+          socket.emit('cameraPreviewEnded', {});
+        })
+        .catch(function(err){
+          // Something went wrong stopping the preview stream
+          console.log('ERROR: ', err);
+        });
     });
 
     // Take a photo
@@ -34,19 +41,14 @@ module.exports = function (io, app) {
       console.log('Received takePhoto event:');
       console.log(data);
 
-      // Kill camera preview process if applicable
-      var previewStopped = camera.stopPreview(app);
-      // Trigger a photo to be taken and saved locally
-      var takePhotoPromise = camera.takePhoto();
-      takePhotoPromise
-        .then(function (file) {
-          // The photo was taken
-          console.log('Take photo promise resolved successfully', file);
-          //socket.emit('photoTaken', {photo: file});
+      // Kill camera preview & take a photo
+      var stopPreviewAndTakePhotoPromise = camera.stopPreviewAndTakePhoto(app);
+      stopPreviewAndTakePhotoPromise
+        .then(function(results){
+          console.log(results);
         })
-        .catch(function (err) {
-          // Something went wrong taking the photo
-          console.error(err);
+        .catch(function(err){
+          console.log('ERROR: ', err);
         });
     });
   });
