@@ -5,12 +5,10 @@ var RaspiCam = require("raspicam");
 // Trigger the start of a preview mjpeg stream from the camera
 var startPreview = function(){
   return new Promise(function(resolve, reject){
-    var mjpegStream = spawn('node', ['node_modules/raspberry-pi-mjpeg-server/raspberry-pi-mjpeg-server.js', '-w', '800', '-l', '480', '-q', '20', '-t', '0'], {detached: true});
+    var mjpegStream = spawn('node', ['node_modules/raspberry-pi-mjpeg-server/raspberry-pi-mjpeg-server.js', '-w', '800', '-l', '480', '-q', '20', '-t', '1'], {detached: true});
   
     var startTimeoutId = setTimeout(function(){
-      console.log('startPreview timed out');
-      // After 5 seconds, kill the process & reject the promise
-      //mjpegStream.kill();
+      // After 5 seconds, kill the process and reject the promise
       process.kill(-mjpegStream.pid);
       reject('startPreview timed out');
     }, 5000);
@@ -19,10 +17,8 @@ var startPreview = function(){
     mjpegStream.stdout.on('data', (data) => {
       // Check if the output contains the string "raspistill" and resolve the promise if found
       var output = data.toString();
-      console.log('Checking:', output);
       if(output.indexOf('raspistill') > -1){
         clearTimeout(startTimeoutId);
-        console.log('startPreview succeeded');
         resolve(mjpegStream);
       }
     });
@@ -30,9 +26,7 @@ var startPreview = function(){
     // If an error occurs, reject the promise
     mjpegStream.stderr.on('data', (data) => {
       clearTimeout(startTimeoutId);
-      console.log('error:', data.toString());
       // If an error occurred, kill the child process & reject the promise
-      //mjpegStream.kill();
       process.kill(-mjpegStream.pid);
       reject('An error occurred: ' + data.toString());
     });
@@ -50,15 +44,14 @@ var stopPreview = function(app){
     var mjpegStream = app.get('mjpegStream');
     if(mjpegStream){
       mjpegStream.on('close', function(code, signal){
-        console.log('stopPreview close event', code, signal);
         app.set('mjpegStream', null);
         clearTimeout(killTimeoutId);
-        setTimeout(function(){
+        resolve();
+        /*setTimeout(function(){
           resolve();
-        }, 500);
+        }, 500);*/
       });
 
-      //mjpegStream.kill('SIGTERM');
       process.kill(-mjpegStream.pid);
     }
     else{
@@ -68,25 +61,26 @@ var stopPreview = function(app){
 };
 
 // Trigger a photo to be taken, and return a promise
-var takePhoto = function(){
+var takePhoto = function(app){
   return new Promise(function(resolve, reject){
+    // Set filename for new image
+    var photoFileName = Date.now() + '.jpg';
     // Configure RaspiCam library to take a single photo
     var raspiCamera = new RaspiCam({
       mode: 'photo',
-      output: process.cwd() + '/photos/'+Date.now()+'.jpg',
+      output: app.get('photoPath') + photoFileName,
       width: 800,
       height: 600,
-      quality: 50,
-      timeout: 0,
+      quality: 85,
+      timeout: 100,
       encoding: 'jpg',
       nopreview: true
     });
 
-    // After 5 seconds, reject the promise
+    // After 10 seconds, reject the promise
     var photoTimeoutId = setTimeout(function(){
-      console.log('takePhoto timed out');
       reject('An error occurred: Photo capture timed out');
-    }, 5000);
+    }, 10000);
 
     // Wait for read events, and resolve/reject the promise based on the result
     raspiCamera.on('read', function(err, timestamp, filename){
@@ -107,7 +101,6 @@ var takePhoto = function(){
 
 var stopPreviewAndTakePhoto = function(app){
   return Promise.mapSeries([stopPreview, takePhoto], function(fn){
-    console.log('mapSeries function: ', fn);
     return fn(app);
   });
 };

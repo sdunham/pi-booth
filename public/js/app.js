@@ -1,36 +1,27 @@
 $(function() {
 
   var socket = io.connect('http://ogrepi2:3000');
-  socket.on('connectionSuccess', function (data) {
-    console.log(data);
-  });
-
-  $('.start-stream').click(function(e){
-    e.preventDefault();
-    socket.emit('initCameraPreview');
-  });
-
-  $('.end-stream').click(function(e){
-    e.preventDefault();
-    $('.camera-stream-contain').css('background-image', '');
-    socket.emit('endCameraPreview');
+  
+  // When a photo has been taken successfully, display a popup with the new image
+  socket.on('photoTaken', function (filename) {
+    $.magnificPopup.open({
+      items: {
+        src: '/photos/' + filename
+      },
+      type: 'image'
+    }, 0);
   });
 
   socket.on('cameraPreviewStarted', function(data) {
     console.log('cameraPreviewStarted');
     var previewPort = data.port;
     var appDomain = document.domain;
-    //$('.camera-stream').attr('src', '#');
-    //$('.camera-stream-contain').html('<img class="camera-stream" src="" />');
-    //$('.camera-stream').attr('src', 'http://'+appDomain+':'+previewPort+'/image.jpg');
     $('.camera-stream-contain').css('background-image', 'url("http://' + appDomain + ':' + previewPort  + '/image.jpg")');
     doCountdown();
   });
 
   socket.on('cameraPreviewEnded', function(data) {
     console.log('cameraPreviewEnded');
-    //$('.camera-stream-contain').html('<img class="camera-stream" src="" />');
-    //$('.camera-stream').attr('src', '/images/Transparent.gif');
     $('.camera-stream-contain').css('background-image', '');
   });
 
@@ -43,8 +34,7 @@ $(function() {
   // Click handler for take photo button
   $('.take-photo-button').click(function(e){
     e.preventDefault();
-    //alert('Eventually this will start a mjpeg stream from the Raspberry Pi camera, and then trigger a photo capture after a certain amount of time.');
-    // TODO: Start stream, update div background to show mjpeg
+    // Start stream, update div background to show mjpeg
     socket.emit('initCameraPreview');
   });
 
@@ -52,6 +42,20 @@ $(function() {
   $('.help-popup-trigger').magnificPopup({
     type:'inline',
     midClick: true
+  });
+
+  // Click handler for gallery popup
+  $('.photo-gallery-popup-trigger').click(function(e){
+    e.preventDefault();
+    $.get('/photoList', function(photos){
+      if(photos.constructor === Array){
+        $.magnificPopup.open({
+          items: photos,
+          gallery: {enabled: true},
+          type: 'image'
+        }, 0);
+      }
+    });
   });
 
   function doCountdown(){
@@ -77,7 +81,7 @@ $(function() {
     }
   }
 
-  // TODO: Take a picture
+  // Take a picture
   function endCountdown(){
     clearInterval(window.countdownInterval);
     window.countdownInterval = null;

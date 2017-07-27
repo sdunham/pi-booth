@@ -45,7 +45,7 @@ module.exports = function (io, app) {
       var stopPreviewAndTakePhotoPromise = camera.stopPreviewAndTakePhoto(app);
       stopPreviewAndTakePhotoPromise
         .then(function(results){
-          console.log(results);
+          socket.emit('photoTaken', results[1])
         })
         .catch(function(err){
           console.log('ERROR: ', err);

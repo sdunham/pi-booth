@@ -5,13 +5,21 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
-var index = require('./routes/index');
-
 var app = express();
 // Spin up server and io instances here, which will be passed to bin/www
 // https://onedesigncompany.com/news/express-generator-and-socket-io
 var server = require('http').Server(app);
 var io = require('socket.io')(server);
+
+var photoPath = process.cwd() + '/photos/';
+if(process.argv.length > 2){
+  photoPath = process.argv[2];
+}
+app.set('photoPath', photoPath);
+app.use('/photos', express.static(photoPath));
+
+// Routing
+var index = require('./routes/index')(app);
 
 // Add socket.io object to app to expose it for use elsewhere in the codebase
 app.use(function(req, res, next){
