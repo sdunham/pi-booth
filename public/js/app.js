@@ -1,6 +1,6 @@
 $(function() {
-
-  var socket = io.connect('http://ogrepi2:3000');
+  // Establish a socket connection w/ the server side app
+  var socket = io.connect();
   
   // When a photo has been taken successfully, display a popup with the new image
   socket.on('photoTaken', function (filename) {
@@ -10,6 +10,9 @@ $(function() {
       },
       type: 'image'
     }, 0);
+
+    // Enable take photo button again
+    $('.take-photo-button').prop('disabled', false);
   });
 
   socket.on('cameraPreviewStarted', function(data) {
@@ -25,15 +28,18 @@ $(function() {
     $('.camera-stream-contain').css('background-image', '');
   });
 
-
+  // Set up global vars related to the camera countdown
   window.countdownIndex = null;
   window.countdownInterval = null;
-  window.countdownDisplaySeconds = 5;
+  window.countdownDisplaySeconds = 8;
   window.countdownValues = Array(100).fill(0).map((e,i)=>i+1).reverse();
 
   // Click handler for take photo button
   $('.take-photo-button').click(function(e){
     e.preventDefault();
+    // Disable take photo button
+    // TODO: Error handling to display errors where appropriate & enable button again
+    $(this).prop('disabled', true);
     // Start stream, update div background to show mjpeg
     socket.emit('initCameraPreview');
   });
@@ -58,12 +64,14 @@ $(function() {
     });
   });
 
+  // IT'S THE FINAL COUNTDOWN (until a photo is taken)
   function doCountdown(){
     $('.countdown').show();
 
-    window.countdownInterval = window.setInterval(updateCountdown, 50);
+    window.countdownInterval = window.setInterval(updateCountdown, 80);
   }
 
+  // Called periodicaly while the countdown is running to update the progress bar and # of seconds remaining
   function updateCountdown(){
     if(window.countdownIndex === null){
       window.countdownIndex = 0;
@@ -74,7 +82,7 @@ $(function() {
 
     var newWidthPercent = window.countdownValues[window.countdownIndex];
     $('.countdown .progress .progress-bar').width(newWidthPercent + '%');
-    $('.countdown .seconds-remaining').html(Math.round(newWidthPercent / 20));
+    $('.countdown .seconds-remaining').html(Math.round(newWidthPercent / 12.5));
 
     if(window.countdownIndex >= 100){
       endCountdown();

@@ -22,7 +22,7 @@ module.exports = function(app){
         }
       }
 
-      res.json(photos);
+      res.json(photos.reverse());
     });
   });
   
