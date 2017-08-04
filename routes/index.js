@@ -4,7 +4,12 @@ module.exports = function(app){
 
   /* GET home page. */
   router.get('/', function(req, res, next) {
-    res.render('index', { title: 'Pi Photo Booth', navText: 'Welcome to our reception!' });
+    res.render('index', {
+      title: 'Pi Photo Booth',
+      navText: 'Welcome to our reception!',
+      brandImage: app.get('brandImage'),
+      backgroundImage: app.get('backgroundImage')
+    });
   });
 
   /* GET JSON array of photo booth filenames */

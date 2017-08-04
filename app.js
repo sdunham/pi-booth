@@ -4,6 +4,7 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var fs = require('fs');
 
 var app = express();
 // Spin up server and io instances here, which will be passed to bin/www
@@ -17,6 +18,17 @@ if(process.argv.length > 2){
 }
 app.set('photoPath', photoPath);
 app.use('/photos', express.static(photoPath));
+
+// Check for optional /public/images/brand.* and background.* and save for later use in views
+var files = fs.readdirSync(process.cwd() + '/public/images/');
+for(var i=0; i<files.length; i++){
+  if(files[i].indexOf('brand.') === 0){
+    app.set('brandImage', files[i]);
+  }
+  else if(files[i].indexOf('background.') === 0){
+    app.set('backgroundImage', files[i]);
+  }
+}
 
 // Routing
 var index = require('./routes/index')(app);

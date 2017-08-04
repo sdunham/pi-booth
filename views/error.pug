@@ -1,6 +1,9 @@
-extends layout
-
-block content
-  h1= message
-  h2= error.status
-  pre #{error.stack}
+<div id="error-popup" class="panel panel-warning mfp-hide">
+  <div class="panel-heading">
+    <h4><span class="glyphicon glyphicon-exclamation-sign"></span> Error</h4>
+  </div>
+  <div class="panel-body">
+    <h5>The following error occurred:</h5>
+    <p class="h6 error-message"></p>
+  </div>
+</div>

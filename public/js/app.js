@@ -8,24 +8,41 @@ $(function() {
       items: {
         src: '/photos/' + filename
       },
-      type: 'image'
+      type: 'image',
+      image: { verticalFit: true  },
+      closeMarkup: '<button title="%title%" type="button" class="mfp-close"><span class="glyphicon glyphicon-remove"></span></button>'
     }, 0);
 
     // Enable take photo button again
     $('.take-photo-button').prop('disabled', false);
+    // Ensure camera preview is removed from the DOM
+    setDefaultBackground();
+  });
+
+  // When an error occurs on the server side, display an error and re-enable the take photo button
+  socket.on('displayError', function(error){
+    $('.take-photo-button').prop('disabled', false);
+    setDefaultBackground();
+    $('#error-popup .error-message').html(error);
+    $.magnificPopup.open({
+      items: {
+        src: '#error-popup',
+        type: 'inline'
+      }
+    });
   });
 
   socket.on('cameraPreviewStarted', function(data) {
     console.log('cameraPreviewStarted');
     var previewPort = data.port;
     var appDomain = document.domain;
-    $('.camera-stream-contain').css('background-image', 'url("http://' + appDomain + ':' + previewPort  + '/image.jpg")');
+    $('.camera-stream-contain').css('background-image', 'url("http://' + appDomain + ':' + previewPort  + '/image.jpg")').removeClass('default');
     doCountdown();
   });
 
   socket.on('cameraPreviewEnded', function(data) {
     console.log('cameraPreviewEnded');
-    $('.camera-stream-contain').css('background-image', '');
+    setDefaultBackground();
   });
 
   // Set up global vars related to the camera countdown
@@ -38,7 +55,6 @@ $(function() {
   $('.take-photo-button').click(function(e){
     e.preventDefault();
     // Disable take photo button
-    // TODO: Error handling to display errors where appropriate & enable button again
     $(this).prop('disabled', true);
     // Start stream, update div background to show mjpeg
     socket.emit('initCameraPreview');
@@ -58,7 +74,9 @@ $(function() {
         $.magnificPopup.open({
           items: photos,
           gallery: {enabled: true},
-          type: 'image'
+          type: 'image',
+          image: { verticalFit: true  },
+          closeMarkup: '<button title="%title%" type="button" class="mfp-close"><span class="glyphicon glyphicon-remove"></span></button>'
         }, 0);
       }
     });
@@ -98,5 +116,11 @@ $(function() {
     $('.countdown .progress .progress-bar').width('100%');
     $('.countdown .seconds-remaining').html('5');
     socket.emit('takePhoto');
+  }
+
+  // Restore the default background image
+  function setDefaultBackground(){ 
+    var bgImagePath = $('.camera-stream-contain').data('defaultbg');
+    $('.camera-stream-contain').css('background-image', 'url("' + bgImagePath  + '")').addClass('default');
   }
 });

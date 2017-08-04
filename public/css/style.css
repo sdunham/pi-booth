@@ -1,4 +1,3 @@
-/* TODO: Custom styles here */
 html, body, #app-contain{
   height: 100%;
 }
@@ -40,14 +39,12 @@ html, body, #app-contain{
   background-size: cover;
 }
 
+.camera-stream-contain.default{
+  background-size: 50%;
+  background-position: 50%;
+}
+
 .camera-stream{
-  /*width: 100%;
-  margin-top: -20px;
-  flex-grow: 1;
-  background-image: url("");
-  background-size: cover;
-  background-position: center center;
-  background-repeat: no-repeat;*/
   margin-top: -20px;
   flex-grow: 1;
   display: block;
@@ -86,4 +83,42 @@ html, body, #app-contain{
 
 .countdown .progress .progress-bar{
   transition: none;
+}
+
+.mfp-figure {
+  background: #fff;
+  padding: 20px 20px 75px;
+  margin: 0px 0px;
+}
+
+img.mfp-img {
+  padding: 0px;
+  max-height: 350px !important;
+}
+
+.mfp-bottom-bar .mfp-counter {
+  color: black;
+  font-family: "Roboto","Helvetica Neue",Helvetica,Arial,sans-serif;
+  text-align: center;
+  line-height: 18px;
+  word-wrap: break-word;
+  width: 100%;
+  font-size: 25px;
+}
+
+.mfp-title {
+  display: none;
+}
+
+.mfp-bottom-bar {
+  margin-top: -44px;
+}
+
+.mfp-image-holder button.mfp-close {
+  color: black;
+  right: -1px;
+  font-size: 25px;
+  padding-right: 0px;
+  top: -8px;
+  opacity: 1;
 }

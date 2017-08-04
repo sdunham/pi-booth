@@ -18,6 +18,7 @@ module.exports = function (io, app) {
         .catch(function (err) {
           // Something went wrong starting the preview stream
           console.error('ERROR: ', err);
+          socket.emit('displayError', err);
         });
     });
 
@@ -33,6 +34,7 @@ module.exports = function (io, app) {
         .catch(function(err){
           // Something went wrong stopping the preview stream
           console.log('ERROR: ', err);
+          socket.emit('displayError', err);
         });
     });
 
@@ -49,6 +51,7 @@ module.exports = function (io, app) {
         })
         .catch(function(err){
           console.log('ERROR: ', err);
+          socket.emit('displayError', err);
         });
     });
   });

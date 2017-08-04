@@ -1,5 +1,7 @@
 # Photos
 photos/*.jpg
+public/images/brand.*
+public/images/background.*
 
 # Logs
 logs

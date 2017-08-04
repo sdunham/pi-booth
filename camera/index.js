@@ -10,7 +10,7 @@ var startPreview = function(){
     var startTimeoutId = setTimeout(function(){
       // After 5 seconds, kill the process and reject the promise
       process.kill(-mjpegStream.pid);
-      reject('startPreview timed out');
+      reject('An error occurred: Starting camera preview timed out');
     }, 5000);
 
     // Watch the output of the child process output for the text "raspistill" and resolve if/when it occurs
@@ -46,10 +46,7 @@ var stopPreview = function(app){
       mjpegStream.on('close', function(code, signal){
         app.set('mjpegStream', null);
         clearTimeout(killTimeoutId);
-        resolve();
-        /*setTimeout(function(){
-          resolve();
-        }, 500);*/
+        resolve(code);
       });
 
       process.kill(-mjpegStream.pid);
