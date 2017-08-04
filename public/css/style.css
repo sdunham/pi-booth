@@ -122,3 +122,5 @@ img.mfp-img {
   top: -8px;
   opacity: 1;
 }
+
+.mfp-close .glyphicon { z-index: -1; }
