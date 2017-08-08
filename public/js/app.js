@@ -82,6 +82,12 @@ $(function() {
     });
   });
 
+  // Restart the Pi using a hidden button
+  $('#nuke-from-orbit').click(function(e){
+    e.preventDefault();
+    socket.emit('restartPi');
+  });
+
   // IT'S THE FINAL COUNTDOWN (until a photo is taken)
   function doCountdown(){
     $('.countdown').show();

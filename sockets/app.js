@@ -1,9 +1,25 @@
+var exec = require('child_process').exec;
 var camera = require('../camera');
 
 // Handle socket.io connections & related functionality
 module.exports = function (io, app) {
   io.on('connection', function (socket) {
     socket.emit('connectionSuccess', { msg: 'Socket connected. Welcome!' });
+
+    // Restart the Pi using a hidden button. Should only be accepted when the request comes dirstly from the Pi
+    // TODO: This is kinda terrible, but we need a way to restart the Pi if something goes wrong without yanking the plug. This should be removed if/when a better alternative is found.
+    socket.on('restartPi', function(){
+      if(socket.handshake.headers.host === 'localhost:3000'){
+        exec('sudo shutdown -r now', function(error, stdout, stderr){
+          if(error){
+            console.log('Error restarting the pi', error);
+          }
+          else{
+            console.log('Pi restarting!');
+          }
+        });
+      }
+    });
     
     socket.on('initCameraPreview', function (data) {
       // Start a preview mjpeg stream of the camera, returned as a Promise

@@ -124,3 +124,9 @@ img.mfp-img {
 }
 
 .mfp-close .glyphicon { z-index: -1; }
+
+a#nuke-from-orbit {
+  float: right;
+  opacity: 0;
+  cursor: default;
+}
